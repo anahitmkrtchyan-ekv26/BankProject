@@ -5,6 +5,7 @@ namespace BankAccountProject
     public class BankAccount
     {
         public string AccountNumber { get; set; }
+
         public decimal Balance { get; private set; }
 
         public BankAccount(string accountNumber, decimal initialBalance = 0)
@@ -15,12 +16,21 @@ namespace BankAccountProject
 
         public void Deposit(decimal amount)
         {
-            // TODO: Add validation to ensure the deposit amount is positive.
+            if (amount <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(amount), "The deposit amount must be greater than zero.");
+            }
+
             Balance += amount;
         }
 
         public void Withdraw(decimal amount)
         {
+            if (amount <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(amount), "The withdrawal amount must be greater than zero.");
+            }
+
             if (amount > Balance)
             {
                 throw new InsufficientFundsException("Not enough funds to withdraw.");
@@ -30,7 +40,11 @@ namespace BankAccountProject
 
         public void Transfer(BankAccount targetAccount, decimal amount)
         {
-            // BUG: Consider adding error handling if targetAccount is null.
+            if (targetAccount == null)
+            {
+                throw new ArgumentNullException(nameof(targetAccount));
+            }
+
             Withdraw(amount);
             targetAccount.Deposit(amount);
         }
